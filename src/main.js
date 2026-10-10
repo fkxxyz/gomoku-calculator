@@ -5,7 +5,7 @@ import i18n from './i18n'
 import store from './store/index.js'
 
 // Redirect to https pages
-if (process.env.NODE_ENV != 'development') {
+if (process.env.NODE_ENV != 'development' && window.location.hostname !== 'tauri.localhost') {
   let loc = window.location.href + ''
   if (loc.indexOf('http://') == 0) {
     window.location.href = loc.replace('http://', 'https://')

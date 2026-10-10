@@ -49,10 +49,11 @@ export default new Vuex.Store({
   },
   actions: {
     async getBrowserCapabilities({ commit, rootState }) {
-      const supportThreads = await threads()
+      const native = !!window.__TAURI_INTERNALS__
+      const supportThreads = native || (await threads())
       const supportSimd = await simd()
       const supportRelaxedSimd = await relaxedSimd()
-      const maxThreads = supportThreads ? navigator.hardwareConcurrency : 1
+      const maxThreads = supportThreads ? Math.max(1, navigator.hardwareConcurrency || 1) : 1
       commit('setBrowserCapability', {
         maxThreads,
         supportThreads,

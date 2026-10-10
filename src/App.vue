@@ -168,7 +168,9 @@ export default {
     }
 
     // 注册 Service Worker
-    if ('serviceWorker' in navigator) {
+    if (window.__TAURI_INTERNALS__) {
+      loadEngine(true)
+    } else if ('serviceWorker' in navigator) {
       register(`${process.env.BASE_URL}service-worker.js`, {
         ready() {
           console.log(

@@ -3,11 +3,15 @@
   "version": "0.31.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "serve": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service serve",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build",
     "lint": "vue-cli-service lint",
     "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'",
-    "pretty": "prettier --write \"./src/**/*.{js,vue,json}\" \"./public/index.html\""
+    "pretty": "prettier --write \"./src/**/*.{js,vue,json}\" \"./public/index.html\"",
+    "tauri": "tauri",
+    "build:rapfi:linux": "bash scripts/build-rapfi-linux.sh",
+    "build:desktop:linux": "npm run build:rapfi:linux && npm run tauri build -- --bundles deb",
+    "build:android": "bash scripts/build-android.sh"
   },
   "dependencies": {
     "core-js": "^2.6.5",
@@ -21,7 +25,8 @@
     "vue-router": "^3.0.3",
     "vuex": "^3.1.1",
     "vux": "^2.10.1",
-    "wasm-feature-detect": "^1.8.0"
+    "wasm-feature-detect": "^1.8.0",
+    "@tauri-apps/api": "^2.0.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.8.0",
@@ -38,6 +43,7 @@
     "vue-template-compiler": "^2.6.10",
     "vux-loader": "^1.2.9",
     "worker-loader": "^3.0.8",
-    "yaml-loader": "^0.5.0"
+    "yaml-loader": "^0.5.0",
+    "@tauri-apps/cli": "^2.0.0"
   }
 }

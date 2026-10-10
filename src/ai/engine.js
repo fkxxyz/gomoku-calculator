@@ -3,6 +3,9 @@ import { script } from '@/../node_modules/dynamic-import/dist/import.js'
 import { threads, simd, relaxedSimd } from 'wasm-feature-detect'
 
 var callback, engineInstance, supportThreads, dataLoaded
+const native = typeof window !== "undefined" && !!window.__TAURI_INTERNALS__
+let nativeInvoke, nativeUnlisten
+let nativeQueue = Promise.resolve()
 
 function locateFile(url, engineDirURL) {
   // Redirect 'rapfi.*\.data' to 'rapfi.data'
@@ -37,6 +40,16 @@ function instantiateSharedWasmMemory() {
 async function init(callbackFn_, loadFullEngine) {
   callback = callbackFn_
   dataLoaded = false
+  if (native) {
+    const { invoke } = await import("@tauri-apps/api/core")
+    const { listen } = await import("@tauri-apps/api/event")
+    nativeInvoke = invoke
+    if (nativeUnlisten) nativeUnlisten()
+    nativeUnlisten = await listen("rapfi-stdout", (event) => onEngineStdout(event.payload))
+    await invoke("engine_start")
+    callback({ ok: true })
+    return "native Rapfi"
+  }
 
   supportThreads = await threads()
   const supportSIMD = await simd()
@@ -98,6 +111,7 @@ async function init(callbackFn_, loadFullEngine) {
 // Stop current engine's thinking process
 // Returns true if force stoped, otherwise returns false
 function stopThinking() {
+  if (native) { sendCommand("YXSTOP"); return false }
   if (supportThreads) {
     sendCommand('YXSTOP')
     return false
@@ -111,6 +125,10 @@ function stopThinking() {
 // Send a command to engine
 function sendCommand(cmd) {
   if (typeof cmd !== 'string' || cmd.length == 0) return
+  if (native) {
+    nativeQueue = nativeQueue.then(() => nativeInvoke("engine_send", { command: cmd })).catch(onEngineStderr)
+    return
+  }
 
   if (supportThreads) engineInstance.sendCommand(cmd)
   else engineInstance.postMessage({ type: 'command', data: cmd })

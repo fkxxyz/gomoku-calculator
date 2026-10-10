@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">"Gomoku Calculator"</string>
+    <string name="main_activity_title">"Gomoku Calculator"</string>
+</resources>

@@ -22,3 +22,18 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+
+src-tauri/target
+# Generated target-specific Rapfi binary and upstream model assets
+src-tauri/resources/engine/rapfi
+src-tauri/resources/engine/rapfi.exe
+src-tauri/resources/engine/*.bin
+src-tauri/resources/engine/*.lz4
+src-tauri/rapfi-build
+src-tauri/resources/engine/*.toml
+# Generated Android Rapfi CMake overlay and binaries
+src-tauri/android-rapfi/source/
+src-tauri/android-rapfi/build-*/
+
+# Tauri-generated schemas
+src-tauri/gen/schemas/
